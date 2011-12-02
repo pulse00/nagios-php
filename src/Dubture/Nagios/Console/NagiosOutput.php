@@ -24,8 +24,19 @@ class NagiosOutput extends ConsoleOutput implements OutputInterface
         
         $status = $output[0];
         
-        if (isset($output[1]) && (strlen($message = $output[1]))) {
-            $this->writeln($output[1]);
+        if (isset($output[1])) {
+            $message = $output[1];             
+            if ((is_string($message))) {
+                $this->writeln($output[1]);
+            } else if (is_array($message)) {                
+                foreach ($message as $key => $line) {                    
+                    if (is_numeric($key)) {                        
+                        $this->writeln($line);                        
+                    } else {                        
+                        $this->writeln(sprintf("%s | %s", $key, $line));
+                    }
+                }
+            }
         }
                 
         $this->doExit($status);
