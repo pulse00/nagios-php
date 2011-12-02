@@ -1,6 +1,6 @@
 #!/bin/sh
 
-COMPONENTS='ClassLoader Console Finder Process'
+COMPONENTS='ClassLoader Console Finder Process EventDispatcher'
 
 cd vendor/Symfony/Component
 for COMPONENT in $COMPONENTS
