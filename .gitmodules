@@ -1,0 +1,18 @@
+[submodule "vendor/Symfony/Component/ClassLoader"]
+	path = vendor/Symfony/Component/ClassLoader
+	url = https://github.com/symfony/ClassLoader.git
+[submodule "vendor/Symfony/Component/Console"]
+	path = vendor/Symfony/Component/Console
+	url = https://github.com/symfony/Console.git
+[submodule "vendor/Symfony/Component/Finder"]
+	path = vendor/Symfony/Component/Finder
+	url = https://github.com/symfony/Finder.git
+[submodule "vendor/pimple"]
+	path = vendor/pimple
+	url = https://github.com/fabpot/Pimple.git
+[submodule "vendor/monolog"]
+	path = vendor/monolog
+	url = https://github.com/Seldaek/monolog.git
+[submodule "vendor/Symfony/Component/Process"]
+	path = vendor/Symfony/Component/Process
+	url = https://github.com/symfony/Process.git
