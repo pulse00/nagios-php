@@ -1,0 +1,9 @@
+#!/usr/bin/env php
+<?php
+
+require_once __DIR__ .'/autoload.php';
+
+use Dubture\Nagios\Compiler;
+
+$compiler = new Compiler();
+$compiler->compile();
