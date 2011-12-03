@@ -116,9 +116,9 @@ class Plugin extends \Pimple
             if ($e->getMessage() === 'Not enough arguments.') {
                 $app = new Application();
                 $app->renderException($e, new ConsoleOutput());
-                exit(self::CRITICAL);
+                $this['output']->critial();                
             }
-            $this['output']->critial();
+            $this['output']->critial($e->getMessage());
         }
     }
     

@@ -4,7 +4,10 @@ nagios-php
 Simple utility to help writing nagios plugins in PHP inspired
 by the [Silex microframework](https://github.com/fabpot/Silex).
 
-Example:
+Usage:
+======
+
+Example - check_hello :
 
 ```php
 <?php 
@@ -20,6 +23,14 @@ $plugin->run(function($name, $foo = 'bar') use ($plugin) {
     
 });
 
+```
+
+Running the above plugin using `check_hello pulse00` will result in an
+nagios service state `OK` and the multiline output:
+
+```
+hello | pulse00
+bar
 ```
 
 The ` Dubture\Nagios\Plugin::run()` method expects a `Closure` whose
@@ -38,3 +49,8 @@ after the following rules:
 - If the second array element is an array, the output is a multi-line message.
 - Every element of the multiline message can either be a simple message (literal value),
 or a message / performance output if the array paramater is a key/value pair.
+
+Installation
+============
+
+Download and include the [nagios.phar](https://github.com/pulse00/nagios-php/raw/master/nagios.phar) file. That's all.
