@@ -1,6 +1,9 @@
 nagios-php
 ==========
 
+[![Build Status](https://travis-ci.org/pulse00/nagios-php.svg?branch=master)](https://travis-ci.org/pulse00/nagios-php)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/pulse00/nagios-php/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/pulse00/nagios-php/?branch=master)
+
 Simple utility to help writing nagios plugins in PHP inspired
 by the [Silex microframework](https://github.com/fabpot/Silex).
 
