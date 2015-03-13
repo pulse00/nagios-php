@@ -3,7 +3,7 @@
 /*
  * This file is part of the nagios-php utility.
  *
- * (c) Robert Gruendler <r.gruendler@gmail.com>
+ * (c) Robert Gruendler <robert@dubture.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -51,18 +51,19 @@ class Compiler
                 ->notName('Compiler.php')
                 ->notName('plugin.php')
                 ->in(__DIR__ . '/../..')
-                ->in(__DIR__ . '/../../../vendor/pimple/lib')
-                ->in(__DIR__ . '/../../../vendor/Symfony/Component/ClassLoader')
-                ->in(__DIR__ . '/../../../vendor/Symfony/Component/Console')
-                ->in(__DIR__ . '/../../../vendor/Symfony/Component/Finder')
-                ->in(__DIR__ . '/../../../vendor/Symfony/Component/EventDispatcher')
-                ->in(__DIR__ . '/../../../vendor/Symfony/Component/Process');
+                ->in(__DIR__ . '/../../../vendor/composer')
+                ->in(__DIR__ . '/../../../vendor/pimple/pimple/src')
+                ->in(__DIR__ . '/../../../vendor/symfony/class-loader/Symfony/Component/ClassLoader')
+                ->in(__DIR__ . '/../../../vendor/symfony/console/Symfony/Component/Console')
+                ->in(__DIR__ . '/../../../vendor/symfony/finder/Symfony/Component/Finder')
+                ->in(__DIR__ . '/../../../vendor/symfony/event-dispatcher/Symfony/Component/EventDispatcher')
+                ->in(__DIR__ . '/../../../vendor/symfony/process/Symfony/Component/Process');
 
         foreach ($finder as $file) {
             $this->addFile($phar, $file);
         }
 
-        $this->addFile($phar, new \SplFileInfo(__DIR__ . '/../../../autoload.php'));
+        $this->addFile($phar, new \SplFileInfo(__DIR__ . '/../../../vendor/autoload.php'));
 
         // Stubs
         $phar->setStub($this->getStub());
@@ -92,7 +93,7 @@ class Compiler
         return <<<'EOF'
     <?php
     Phar::mapPhar('nagios.phar');
-    require_once 'phar://nagios.phar/autoload.php';
+    require_once 'phar://nagios.phar/vendor/autoload.php';
 
     __HALT_COMPILER();
 EOF;

@@ -1,0 +1,25 @@
+{
+    "name": "dubture/nagios-php",
+    "description": "Nagios php plugin",
+    "require": {
+        "monolog/monolog": "~1.13",
+        "pimple/pimple": "~3.0",
+        "symfony/console": "~2.6",
+        "symfony/class-loader": "~2.6",
+        "symfony/finder": "~2.6",
+        "symfony/process": "~2.6",
+        "symfony/event-dispatcher": "~2.6"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.5"
+    },
+    "authors": [
+        {
+            "name": "Robert Gruendler",
+            "email": "robert@dubture.com"
+        }
+    ],
+    "autoload": {
+      "psr-4": { "Dubture\\Nagios\\": "src\\Dubture\\Nagios" }
+    }
+}

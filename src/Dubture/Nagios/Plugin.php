@@ -3,17 +3,22 @@
 /*
  * This file is part of the nagios-php utility.
  *
- * (c) Robert Gruendler <r.gruendler@gmail.com>
+ * (c) Robert Gruendler <robert@dubture.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
 namespace Dubture\Nagios;
+
 use Dubture\Nagios\Event\NagiosEvent;
 use Dubture\Nagios\Console\NagiosOutput;
 use Dubture\Nagios\Event\NagiosErrorEvent;
 use Dubture\Nagios\Exception\ExceptionHandler;
+use Pimple\Container;
+use Pimple\ServiceProviderInterface;
+use Symfony\Component\Console\Input\Input;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\ClassLoader\UniversalClassLoader;
@@ -25,7 +30,11 @@ use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
-class Plugin extends \Pimple
+/**
+ * Class Plugin
+ * @package Dubture\Nagios
+ */
+class Plugin extends Container
 {
     /** 
      * @var InputDefinition $input
@@ -45,6 +54,9 @@ class Plugin extends \Pimple
     const CRITICAL = 2;
     const UNKNOWN = 3;
 
+    /**
+     * @param bool $debug
+     */
     public function __construct($debug = true)
     {
         if ($debug === false){            
@@ -54,39 +66,44 @@ class Plugin extends \Pimple
         set_error_handler(array($this, 'handleError'));
         
         $app = $this;
-        
-        $this['autoloader'] = $this->share(function() {
+
+        $this['autoloader'] = function() {
             $loader = new UniversalClassLoader();
             $loader->register();        
             return $loader;
-        });        
+        };
         
-        $this['dispatcher'] = $this->share(function() use ($app) {            
+        $this['dispatcher'] = function() use ($app) {
             $dispatcher = new EventDispatcher();
             return $dispatcher;
-        });
+        };
 
-        $this['exception_handler'] = $this->share(function() use ($app) {
+        $this['exception_handler'] = function() use ($app) {
             $handler = new ExceptionHandler();
             $app['dispatcher']->addSubscriber($handler);
             return $handler;
-        });
+        };
         
         $this['process'] = function($c) {
             return new Process($c['commandline']);
         };
         
-        $this['output'] = $this->share(function() use($app) {
+        $this['output'] = function() use($app) {
             $output = new NagiosOutput();
             $output->setPlugin($app);
             return $output;
-        });
+        };
         
         $this->input = new InputDefinition();
         $handler = $this['exception_handler'];
 
     }
-    
+
+    /**
+     * @param ServiceProviderInterface $provider
+     * @param array $values
+     * @return void|static
+     */
     public function register(ServiceProviderInterface $provider, array $values = array()) 
     {        
         foreach ($values as $key => $value) {
@@ -96,32 +113,46 @@ class Plugin extends \Pimple
         $provider->register($this);
         
     }
-        
+
+    /**
+     * @param $errno
+     * @param $errstr
+     * @param $errfile
+     * @param $errline
+     */
     public function handleError($errno, $errstr, $errfile, $errline)
     { 
         $event = new NagiosErrorEvent($this, $errno, $errstr, $errfile, $errline);                
         $this['dispatcher']->dispatch(NagiosEvent::ERROR, $event);
     }
 
+    /**
+     * @param callable $handler
+     */
     public function run(\Closure $handler)
     {
         try {
-                        
+            // get the arguments from the commandline
             $params = $this->processArguments(new \ReflectionFunction($handler));
+            // now call the handler with those arguments
             $output = call_user_func_array($handler, $params);
+            // report the output
             $this['output']->report($output);
-            
         } catch (\Exception $e) {
                         
             if ($e->getMessage() === 'Not enough arguments.') {
                 $app = new Application();
                 $app->renderException($e, new ConsoleOutput());
-                $this['output']->critial();                
+                $this['output']->critical();
             }
-            $this['output']->critial($e->getMessage());
+            $this['output']->critical($e->getMessage());
         }
     }
-    
+
+    /**
+     * @param \ReflectionFunction $reflector
+     * @return array
+     */
     protected function processArguments(\ReflectionFunction $reflector)
     {
         $params = array();
@@ -140,19 +171,34 @@ class Plugin extends \Pimple
             }
         }
         
-        $argv = new ArgvInput();
-        $argv->bind($this->input);
-        $argv->validate();
+        $input = $this->getInput();
+        $input->bind($this->input);
+        $input->validate();
 
         foreach ($preprocess as $param) {            
             if (isset($param['option'])) {
-                $params[] = $argv->getOption($param['option']);
+                $params[] = $input->getOption($param['option']);
             } else {
-                $params[] = $argv->getArgument($param['arg']);
+                $params[] = $input->getArgument($param['arg']);
             }
         }
         
         return $params;
-        
+    }
+
+    /**
+     * @return InputInterface
+     */
+    protected function getInput()
+    {
+        return new ArgvInput();
+    }
+
+    /**
+     * @return bool
+     */
+    public function doExitOnOutput()
+    {
+        return true;
     }
 }
