@@ -70,7 +70,7 @@ class Compiler
 
         $phar->stopBuffering();
 
-        // $phar->compressFiles(\Phar::GZ);
+        $phar->compressFiles(\Phar::GZ);
 
         unset($phar);
     }
