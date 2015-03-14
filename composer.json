@@ -1,6 +1,7 @@
 {
     "name": "dubture/nagios-php",
     "description": "Nagios php plugin",
+    "keywords": ["nagios", "monitoring"],
     "require": {
         "monolog/monolog": "~1.13",
         "pimple/pimple": "~3.0",
